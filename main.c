@@ -6,7 +6,7 @@
 /*   By: pauvicto <pauvicto@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 18:51:39 by pauvicto          #+#    #+#             */
-/*   Updated: 2023/08/15 02:27:48 by pauvicto         ###   ########.fr       */
+/*   Updated: 2023/08/16 00:48:57 by pauvicto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int validate_parameters(t_data *data, int argc, char* argv[])
 
 	i = 1;
 	if ( argc != 5 && argc != 6)
-		return (data->error = INVALID_PARAMETER_AMOUNT);
+		return (data->error = INVALID_PARAMETER_QUANT);
 	while (i < argc)
 	{
 		if (is_all_digits(&argv[i]) == false)

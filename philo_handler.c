@@ -6,18 +6,13 @@
 /*   By: pauvicto <pauvicto@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 18:51:33 by pauvicto          #+#    #+#             */
-/*   Updated: 2023/08/15 01:10:45 by pauvicto         ###   ########.fr       */
+/*   Updated: 2023/08/15 22:41:39 by pauvicto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "philosophers.h"
-// void	philo_print(t_philo *philo, char *str) //imprime uma mensagem formatada com o carimbo de data e hora, o número do filósofo e uma string fornecida como argumento.
-// {
 
-// }
-
-// Função que verifica se o filósofo morreu
 void	*philo_verify_death(void *phi)
 {
 	t_philo	*philo;
@@ -86,7 +81,7 @@ void	*routine(void *philosofer)
 		philo_forks(philo); // Faz o filósofo pegar os garfos
 		philo_eat(philo); // Faz o filósofo comer
 		pthread_detach(death_monitor); // Desanexa a thread de monitoramento de morte
-		if (philo->ate_times == philo->data->eat_count_max) // Se o filósofo comeu a quantidade máxima de vezes permitida
+		if (philo->ate_times == philo->data->eat_count_max && philo->data->eat_count_max != 0) // Se o filósofo comeu a quantidade máxima de vezes permitida
 		{
 			pthread_mutex_lock(&philo->data->stop_mutex); // Bloqueia o mutex de escrita
 			if (++philo->data->max_ate == philo->data->philo_amount) // Incrementa a quantidade de filósofos que comeram a quantidade máxima de vezes permitida

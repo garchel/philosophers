@@ -6,7 +6,7 @@
 /*   By: pauvicto <pauvicto@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 18:51:44 by pauvicto          #+#    #+#             */
-/*   Updated: 2023/08/15 20:58:23 by pauvicto         ###   ########.fr       */
+/*   Updated: 2023/08/16 01:12:34 by pauvicto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 int init_data(t_data *data, int argc, char* argv[])
 {
-	if (!(data->philo = malloc(sizeof(t_philo) * data->philo_amount)))
-		return (data->error = PHILO_MALLOC_ERROR);
 	data->start_time = 0;
 	data->stop_condition = 0;
 	data->max_ate = 0;
@@ -23,13 +21,17 @@ int init_data(t_data *data, int argc, char* argv[])
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
+	data->eat_count_max = 0;
+	data->philo = malloc(sizeof(t_philo) * data->philo_amount);
 	if (argc == 6)
 		data->eat_count_max = ft_atoi(argv[5]);
-	else
-		data->eat_count_max = 0;
+	if (argc == 6 && data->eat_count_max == 0)
+		return (data->error = INVALID_PARAMETER_FORMAT);
 	if (data->philo_amount < 1 || data->time_to_die < 0 || data->time_to_eat < 0
 		|| data->time_to_sleep < 0 || data->eat_count_max < 0)
-		return (data->error = INIT_DATA_ERROR);
+		return (data->error = INVALID_PARAMETER_FORMAT);
+	if (data->philo == NULL)
+		return (data->error = PHILO_MALLOC_ERROR);
 	return (0);
 }
 
@@ -41,7 +43,23 @@ int init_mutexes(t_data *data)
 		return (data->error = INIT_MUTEX_ERROR);
 	if (pthread_mutex_init(&data->dead_mutex, NULL) != 0)
 		return (data->error = INIT_MUTEX_ERROR);
+	if (pthread_mutex_init(&data->stop_mutex, NULL) != 0)
+		return (data->error = INIT_MUTEX_ERROR);
 	return (0);
+}
+
+void forks_handler(t_data *data)
+{
+    int i = 0;
+
+    while (i < data->philo_amount)
+    {
+        if (i == data->philo_amount - 1)
+            data->philo[i].right_fork = &data->philo[0].left_fork;
+        else
+            data->philo[i].right_fork = &data->philo[i + 1].left_fork;
+        i++;
+    }
 }
 
 int	init_philos(t_data *data)
@@ -57,19 +75,21 @@ int	init_philos(t_data *data)
 		data->philo[i].last_ate = 0; // Atribui o tempo da última refeição
 		data->philo[i].pos = i + 1; // Atribui o número do filósofo
 		pthread_mutex_init(&(data->philo[i].left_fork), NULL); // Inicializa o mutex do garfo esquerdo
-		//pthread_mutex_init(data->philo[i].right_fork, NULL); // Inicializa o mutex do garfo direito
-		if (i == data->philo_amount - 1) // Se for o último filósofo, o garfo direito é o primeiro (Fechando o círculo)
-			data->philo[i].right_fork = &data->philo[0].left_fork;
-		else // Se não, o garfo do próximo filósofo é o garfo direito do filósofo atual
-			data->philo[i].right_fork = &data->philo[i + 1].left_fork; 
+	}
+	forks_handler(data);
+	i = -1;
+	while (++i < data->philo_amount)
+	{
 		if (pthread_create(&data->philo[i].thread_id, NULL, \
 				&routine, &(data->philo[i])) != 0) // Cria a thread do filósofo com a função routine
 			return (data->error = INIT_PHILOS_ERROR);
 	}
 	i = -1;
 	while (++i < data->philo_amount)
+	{
 		if (pthread_join(data->philo[i].thread_id, NULL) != 0) // Aguarda o término da execução das threads para evitar que o programa termine antes da hora ocasionando em um erro de execução
 			return (data->error = INIT_PHILOS_ERROR);
+	}
 	return (0);
 }
 
@@ -84,7 +104,6 @@ int init_handler (t_data *data, int argc, char* argv[])
 	printf("Init Philos \n");
 	if (init_philos(data) != 0)
 		return (error_handler(data));
-	printf("Init Philos FIM \n");
 	return (0);
 }
 
