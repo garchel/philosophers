@@ -6,7 +6,7 @@
 /*   By: pauvicto <pauvicto@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 18:51:44 by pauvicto          #+#    #+#             */
-/*   Updated: 2023/08/15 01:50:35 by pauvicto         ###   ########.fr       */
+/*   Updated: 2023/08/15 20:58:23 by pauvicto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ int	init_philos(t_data *data)
 		data->philo[i].last_ate = 0; // Atribui o tempo da última refeição
 		data->philo[i].pos = i + 1; // Atribui o número do filósofo
 		pthread_mutex_init(&(data->philo[i].left_fork), NULL); // Inicializa o mutex do garfo esquerdo
+		//pthread_mutex_init(data->philo[i].right_fork, NULL); // Inicializa o mutex do garfo direito
 		if (i == data->philo_amount - 1) // Se for o último filósofo, o garfo direito é o primeiro (Fechando o círculo)
 			data->philo[i].right_fork = &data->philo[0].left_fork;
 		else // Se não, o garfo do próximo filósofo é o garfo direito do filósofo atual
@@ -83,6 +84,7 @@ int init_handler (t_data *data, int argc, char* argv[])
 	printf("Init Philos \n");
 	if (init_philos(data) != 0)
 		return (error_handler(data));
+	printf("Init Philos FIM \n");
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: pauvicto <pauvicto@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 18:51:39 by pauvicto          #+#    #+#             */
-/*   Updated: 2023/08/15 01:54:42 by pauvicto         ###   ########.fr       */
+/*   Updated: 2023/08/15 02:27:48 by pauvicto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,7 @@ int main(int argc, char* argv[])
 	printf("Init Handler \n");
 	if (init_handler(&data, argc, argv) != 0)
 		return (error_handler(&data));
+	printf("Free final \n");
 	free_handler(&data);
+	printf("Free final 2 \n");
 }
