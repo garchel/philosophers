@@ -6,11 +6,9 @@
 /*   By: pauvicto <pauvicto@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 18:51:26 by pauvicto          #+#    #+#             */
-/*   Updated: 2023/08/16 00:45:49 by pauvicto         ###   ########.fr       */
+/*   Updated: 2023/08/16 22:09:44 by pauvicto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
@@ -51,11 +49,12 @@ typedef struct s_philo
 	pthread_mutex_t	left_fork;
 	pthread_mutex_t	*right_fork;
 	pthread_t		thread_id;
+	pthread_t		death_monitor_thread;
 }				t_philo;
 
 typedef struct s_data
 {
-	unsigned long	start_time;     
+	unsigned long	start_time;
 	int				stop_condition;
 	int				max_ate;
 	int				philo_amount;
@@ -64,42 +63,37 @@ typedef struct s_data
 	int				time_to_sleep;
 	int				eat_count_max;
 	struct s_philo	*philo;
-	//phtread_mutex_t	*forks_mutex;
 	pthread_mutex_t	write_mutex;
-	pthread_mutex_t stop_mutex;
+	pthread_mutex_t	stop_mutex;
 	pthread_mutex_t	meal_mutex;
 	pthread_mutex_t	dead_mutex;
 	int				error;
 }				t_data;
 
 //error_handler.c
-void free_handler(t_data *data);
-int error_handler(t_data *data);
-
-//free_handler.c
+void		free_handler(t_data *data);
+int			error_handler(t_data *data);
 
 //init_handler.c
-int init_handler (t_data *data, int argc, char* argv[]);
+int			init_handler(t_data *data, int argc, char *argv[]);
 
-//main.c
+//init_utils.c
+void		forks_handler(t_data *data);
+void		*philo_death_monitor(void *philosofer);
+int			threads_maker(t_data *data);
 
 //philo_handler.c
-void	*routine(void *philosofer);
-void	philo_eat(t_philo *philo);
-void	philo_forks(t_philo *philo);
-void	*philo_verify_death(void *phi);
+void		*routine(void *philosofer);
+void		philo_eat(t_philo *philo);
+void		philo_forks(t_philo *philo);
+void		*philo_verify_death(void *phi);
 
 // utils
-long long	timestamp(void);
-int	is_dead(t_philo *philo, int nb);
-void	ft_usleep(int ms);
-void	print(t_philo *philo, char *str);
-bool	is_all_digits(char **argv);
-int	ft_atoi(const char *str);
+long long	ft_get_time(void);
+int			is_dead(t_philo *philo, int nb);
+void		ft_usleep(int ms);
+void		philo_print(t_philo *philo, char *str);
+bool		validate_digits(char **argv);
+int			ft_atoi(const char *str);
 
-//philo_handler_test.c
-void test_philo_verify_death();
-void test_philo_forks();
-void test_philo_eat();
-void test_routine();
 #endif

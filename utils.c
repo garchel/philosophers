@@ -6,45 +6,18 @@
 /*   By: pauvicto <pauvicto@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 18:51:13 by pauvicto          #+#    #+#             */
-/*   Updated: 2023/08/15 01:16:21 by pauvicto         ###   ########.fr       */
+/*   Updated: 2023/08/16 20:56:55 by pauvicto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static bool	isdigit_or_signal(char c)
-{
-	if ((c >= '0' && c <= '9') || (c == '-' && c == '+'))
-		return (true);
-	return (false);
-}
-
-bool	is_all_digits(char **argv)
-{
-	int	i;
-	int	j;
-
-	i = 1;
-	while (argv[i])
-	{
-		j = 0;
-		while (argv[i][j])
-		{
-			if (isdigit_or_signal(argv[i][j]) == false)
-				return (false);
-			j += 1;
-		}
-		i += 1;
-	}
-	return (true);
-}
-
-long long	timestamp(void)
+long long	ft_get_time(void)
 {
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000); // Retorna o tempo atual da máquina em milissegundos
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
 int	is_dead(t_philo *philo, int nb)
@@ -61,21 +34,21 @@ int	is_dead(t_philo *philo, int nb)
 	return (false);
 }
 
-void	ft_usleep(int ms) // Dorme por ms milissegundos
+void	ft_usleep(int ms)
 {
 	long int	time;
 
-	time = timestamp();
-	while (timestamp() - time < ms)
+	time = ft_get_time();
+	while (ft_get_time() - time < ms)
 		usleep(ms / 10);
 }
 
-void	print(t_philo *philo, char *str)
+void	philo_print(t_philo *philo, char *str)
 {
 	unsigned long	time;
 
 	pthread_mutex_lock(&(philo->data->write_mutex));
-	time = timestamp() - philo->data->start_time;
+	time = ft_get_time() - philo->data->start_time;
 	if (!philo->data->stop_condition && time >= 0 \
 			&& time <= INT_MAX && !is_dead(philo, 0))
 		printf("%lu %d %s", time, philo->pos, str);
